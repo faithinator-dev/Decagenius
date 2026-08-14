@@ -86,7 +86,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const prompt = promptInput.value.trim();
         if ((!prompt && !attachedFile) || !agentId) return;
 
-        displayMessage(prompt, 'user');
+        if (prompt) {
+            displayMessage(prompt, 'user');
+        }
         if (attachedFile) {
             // Add a visual indicator in the chat that a file was sent
             const fileMessage = document.createElement('div');
@@ -134,7 +136,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const messageElement = document.createElement('div');
         messageElement.classList.add('message', `${sender}-message`);
 
-        if (typeof data === 'string') {
+        if (sender === 'user') {
+            messageElement.textContent = data;
+        } else if (typeof data === 'string') {
             // For simple string messages like the initial welcome.
             messageElement.textContent = data;
         } else if (data.response) {
