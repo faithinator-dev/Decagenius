@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= agent.name %> - Decagenius</title>
+    <link rel="stylesheet" href="/image-agent-page.css">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+    <div class="agent-container" data-agent-id="<%= agent.id %>">
+        <header class="agent-header">
+            <a href="/" class="back-link">&larr; All Agents</a>
+            <div id="agent-emoji" class="agent-emoji"><%- agent.icon %></div>
+            <h1 id="agent-name"><%= agent.name %></h1>
+            <p id="agent-description" class="agent-description"><%= agent.description %></p>
+        </header>
+
+        <main class="chat-main">
+            <div id="chat-history"></div>
+        </main>
+
+        <footer class="input-area-container">
+            <div class="chat-input">
+                <textarea id="prompt-input" placeholder="Describe the image you want to create..."></textarea>
+                <button id="send-button" title="Generate Image">&rarr;</button>
+            </div>
+        </footer>
+    </div>
+    <script src="/image-agent-page.js"></script>
+</body>
+</html>

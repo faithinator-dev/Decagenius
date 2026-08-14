@@ -25,6 +25,12 @@ const upload = multer({ storage: storage, limits: { fileSize: 10 * 1024 * 1024 }
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// --- View Engine Setup ---
+app.set('view engine', 'ejs');
+// By default, Express looks for templates in a 'views' directory.
+// Since your .ejs files are in the root, we'll point it there.
+app.set('views', __dirname);
+
 // --- Agent Data (Single Source of Truth) ---
 // Helper to create URL-friendly IDs
 const toAgentId = (name) => name.toLowerCase().replace(/ & /g, '-').replace(/\s+/g, '-').replace(/\+/g, '');
@@ -95,8 +101,14 @@ app.get('/app', (req, res) => {
 // Route for a specific agent's page
 app.get('/agent/:agentId', (req, res) => {
     // Check if agent exists before sending the file
-    if (agentsById[req.params.agentId]) {
-        res.sendFile(path.join(__dirname, 'public', 'agent-page.html'));
+    const agent = agentsById[req.params.agentId];
+    if (agent) {
+        if (agent.type === 'image') {
+            res.render('image-agent-page', { agent: agent });
+        } else {
+            // Render the standard EJS template for text-based agents
+            res.render('agent-page', { agent: agent });
+        }
     } else {
         // Optional: redirect to a 404 page or homepage
         res.status(404).redirect('/');
@@ -201,7 +213,21 @@ app.post('/api/agent', upload.single('file'), async (req, res) => {
             });
 
             const result = await chat.sendMessage(fullPrompt);
-            const responseText = result.response.text();
+            const response = result.response;
+
+            // Add robust check for blocked responses or other API issues
+            if (!response.candidates || response.candidates.length === 0) {
+                const blockReason = response.promptFeedback?.blockReason;
+                let userMessage = "The AI's response was blocked. Please try rephrasing your prompt.";
+                if (blockReason) {
+                    console.error(`AI response blocked. Reason: ${blockReason}`);
+                    userMessage = `Your request was blocked by the AI's safety filter (Reason: ${blockReason}). Please modify your prompt.`;
+                }
+                // Send a specific error that the client can display
+                return res.status(400).json({ error: userMessage });
+            }
+
+            const responseText = response.text();
 
             // Update the history on the server (localhost in-memory)
             chatHistories[agentId].push({ role: 'user', parts: [{ text: fullPrompt }] });
@@ -218,6 +244,13 @@ app.post('/api/agent', upload.single('file'), async (req, res) => {
     }
 });
 
+
+// For local development, start the server
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server is running on http://localhost:${PORT}`);
+    });
+}
 
 // Export the app for serverless environments like Vercel
 module.exports = app;
