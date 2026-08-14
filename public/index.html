@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decagenius - Multi-Agent AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Decagenius</h1>
+            <p>Your Personal Council of AI Experts</p>
+        </header>
+
+        <main>
+            <div class="agent-selector-container">
+                <label for="agent-selector">Choose an Agent:</label>
+                <select id="agent-selector">
+                    <!-- Options will be populated by script.js -->
+                </select>
+            </div>
+
+            <div id="chat-window">
+                <div id="chat-history"></div>
+                <div class="chat-input">
+                    <textarea id="prompt-input" placeholder="Enter your prompt here..."></textarea>
+                    <button id="send-button">Send</button>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Built with Vanilla JS, Node.js, and the Gemini API.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
