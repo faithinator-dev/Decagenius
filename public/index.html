@@ -4,35 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Decagenius - Multi-Agent AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Decagenius</h1>
-            <p>Your Personal Council of AI Experts</p>
+        <header class="main-header">
+            <div class="logo">Decagenius</div>
+            <nav>
+                <a href="#features">Features</a>
+                <a href="#agents">Agents</a>
+                <a href="/app" class="btn btn-primary">Launch App</a>
+            </nav>
         </header>
 
         <main>
-            <div class="agent-selector-container">
-                <label for="agent-selector">Choose an Agent:</label>
-                <select id="agent-selector">
-                    <!-- Options will be populated by script.js -->
-                </select>
-            </div>
-
-            <div id="chat-window">
-                <div id="chat-history"></div>
-                <div class="chat-input">
-                    <textarea id="prompt-input" placeholder="Enter your prompt here..."></textarea>
-                    <button id="send-button">Send</button>
+            <section class="hero">
+                <div class="hero-content">
+                    <h1>Your Personal Council of AI Experts</h1>
+                    <p>Delegate any task to a specialized AI agent. From debugging code to drafting emails, Decagenius has you covered.</p>
+                    <a href="/app" class="btn btn-large btn-primary">Get Started for Free</a>
                 </div>
-            </div>
+            </section>
+
+            <section id="featured-agents" class="featured-agents-section">
+                <h2>Featured Agents</h2>
+                <div class="featured-agents-container">
+                    <!-- Featured agent cards will be populated by script.js -->
+                </div>
+            </section>
+
+            <section id="agents" class="agents-section">
+                <h2>Meet All Your Agents</h2>
+                <div class="carousel-container">
+                    <div class="carousel-track">
+                        <!-- Agent cards will be populated by script.js -->
+                    </div>
+                </div>
+            </section>
+
+            <section id="features" class="features-section">
+                <h2>Why Decagenius?</h2>
+                <!-- Add more feature sections here -->
+            </section>
         </main>
 
         <footer>
-            <p>Built with Vanilla JS, Node.js, and the Gemini API.</p>
+            <p>&copy; 2026 Decagenius. Built with Vanilla JS, Node.js, and the Gemini API.</p>
         </footer>
     </div>
     <script src="script.js"></script>

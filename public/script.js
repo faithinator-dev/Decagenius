@@ -1,81 +1,59 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const agentSelector = document.getElementById('agent-selector');
-    const promptInput = document.getElementById('prompt-input');
-    const sendButton = document.getElementById('send-button');
-    const chatHistory = document.getElementById('chat-history');
+document.addEventListener('DOMContentLoaded', async () => {
+    const carouselTrack = document.querySelector('.carousel-track');
+    const featuredContainer = document.querySelector('.featured-agents-container');
 
-    // Full list of 30 agents
-    const agents = [
-        // Top 10
-        "CV & Web Builder", "File & Link Story Reader", "Market Price Scanner",
-        "CV Roast + LinkedIn", "Fake News Buster", "Mental Health Buddy",
-        "AI Image Studio", "Code Debugger", "Language Tutor", "Expense Tracker",
-        // Additional 20
-        "Travel Planner", "Recipe Chef", "Workout Coach", "Legal Explainer",
-        "SQL Optimizer", "Email Drafter", "Study Quizzer", "Gift Matcher",
-        "Dream Interpreter", "Plant Doctor", "Negotiation Coach", "Horoscope & Mindset",
-        "Movie Matcher", "Slang Translator", "Joke Smith", "Debate Partner",
-        "Time Zone Buddy", "Habit Tracker", "Alias Generator", "Local Guide"
-    ];
+    function createAgentCard(agent) {
+        const cardLink = document.createElement('a');
+        cardLink.href = `/agent/${agent.id}`;
+        cardLink.classList.add('agent-card');
 
-    // Populate the agent selector dropdown
-    agents.forEach(agent => {
-        const option = document.createElement('option');
-        option.value = agent.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-');
-        option.textContent = agent;
-        agentSelector.appendChild(option);
-    });
+        cardLink.innerHTML = `
+            <div class="agent-emoji">${agent.icon}</div>
+            <div class="agent-name">${agent.name}</div>
+        `;
+        return cardLink;
+    }
 
-    // --- Event Listeners ---
-    sendButton.addEventListener('click', sendMessage);
-    promptInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
-    });
+    function populateFeaturedAgents(agents) {
+        if (!featuredContainer) return;
 
-    // --- Functions ---
-    async function sendMessage() {
-        const prompt = promptInput.value.trim();
-        const selectedAgent = agentSelector.value;
+        // Feature the first 3 agents
+        const featuredAgents = agents.slice(0, 3);
 
-        if (!prompt) return;
+        featuredContainer.innerHTML = '';
+        featuredAgents.forEach(agent => {
+            const card = createAgentCard(agent);
+            featuredContainer.appendChild(card);
+        });
+    }
 
-        displayMessage(prompt, 'user');
-        promptInput.value = '';
-        promptInput.focus();
+    function populateCarousel(agents) {
+        if (!carouselTrack) return;
 
+        // Duplicate agents for seamless scrolling
+        const allAgents = [...agents, ...agents];
+
+        carouselTrack.innerHTML = ''; // Clear existing
+        allAgents.forEach(agent => {
+            const card = createAgentCard(agent);
+            carouselTrack.appendChild(card);
+        });
+    }
+
+    async function loadAgents() {
         try {
-            const response = await fetch('/api/agent', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    agent: selectedAgent,
-                    prompt: prompt,
-                }),
-            });
+            const response = await fetch('/api/agents');
+            if (!response.ok) throw new Error('Failed to fetch agents');
+            const agents = await response.json();
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            displayMessage(data.response, 'agent');
-
+            populateFeaturedAgents(agents);
+            populateCarousel(agents);
         } catch (error) {
-            console.error('Error fetching from API:', error);
-            displayMessage('Sorry, something went wrong. Please check the console for details.', 'agent');
+            console.error('Error loading agents:', error);
+            if (featuredContainer) featuredContainer.innerHTML = '<p>Could not load featured agents.</p>';
+            if (carouselTrack) carouselTrack.innerHTML = '<p>Could not load AI agents.</p>';
         }
     }
 
-    function displayMessage(message, sender) {
-        const messageElement = document.createElement('div');
-        messageElement.classList.add('message', `${sender}-message`);
-        messageElement.textContent = message;
-        chatHistory.appendChild(messageElement);
-        chatHistory.scrollTop = chatHistory.scrollHeight; // Auto-scroll to the latest message
-    }
+    loadAgents();
 });
